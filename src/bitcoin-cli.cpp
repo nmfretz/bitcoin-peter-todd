@@ -575,6 +575,7 @@ public:
             }
         };
         result += "   total   block";
+        if (m_full_rbf_peers_count) result += " fullrbf";
         if (m_manual_peers_count) result += "  manual";
 
         const std::array rows{"in", "out", "total"};
