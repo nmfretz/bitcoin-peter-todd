@@ -1001,7 +1001,11 @@ bool MemPoolAccept::ReplacementChecks(Workspace& ws)
     }
     if (const auto err_string{PaysForRBF(ws.m_conflicting_fees, ws.m_modified_fees, ws.m_vsize,
                                          m_pool.m_incremental_relay_feerate, hash)}) {
-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, "insufficient fee", *err_string);
+
+        // Check if the fee-rate is increased sufficiently to qualify for replace-by-fee-rate
+        if (const auto err_string{IncreasesFeeRate(ws.m_iters_conflicting, newFeeRate, hash)}) {
+            return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, "insufficient fee", *err_string);
+        }
     }
     return true;
 }
