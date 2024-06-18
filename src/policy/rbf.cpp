@@ -177,12 +177,8 @@ std::optional<std::string> IncreasesFeeRate(const CTxMemPool::setEntries& iters_
 {
     for (const auto& mi : iters_conflicting) {
         CFeeRate original_feerate(mi->GetFee(), mi->GetTxSize());
-        CFeeRate target_feerate = original_feerate;
-        // FIXME: do a proper multiplication; CFeeRate doesn't yet the
-        // necessary operators to do this easily
-        target_feerate += target_feerate;
-        if (replacement_feerate < target_feerate) {
-            return strprintf("rejecting fee-rate replacement %s; new feerate %s < old feerate %s * 2",
+        if (replacement_feerate < original_feerate * 1.25) {
+            return strprintf("rejecting fee-rate replacement %s; new feerate %s < old feerate %s * 1.25",
                              txid.ToString(),
                              replacement_feerate.ToString(),
                              original_feerate.ToString());
